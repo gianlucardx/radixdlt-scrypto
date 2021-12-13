@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["decode_data","Decodes data into an instance of `T`."],["format_data","Formats any data."],["format_data_with_ledger","Formats any data, using ledger state."]]});
