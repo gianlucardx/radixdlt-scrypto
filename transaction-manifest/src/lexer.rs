@@ -24,7 +24,6 @@ pub enum TokenKind {
     String(String),
 
     /* Keywords */
-    Unit,
     True,
     False,
     Struct,
@@ -49,6 +48,8 @@ pub enum TokenKind {
     Vault,
 
     /* Punctuations */
+    OpenCurlyBrace,
+    CloseCurlyBrace,
     OpenParenthesis,
     CloseParenthesis,
     OpenBracket,
@@ -137,7 +138,7 @@ impl Lexer {
             '-' | '0'..='9' => self.tokenize_number(),
             '"' => self.tokenize_string(),
             'a'..='z' | 'A'..='Z' => self.tokenize_identifier(),
-            '(' | ')' | '[' | ']' | ',' | ';' => self.tokenize_punctuation(),
+            '{' | '}' | '(' | ')' | '[' | ']' | ',' | ';' => self.tokenize_punctuation(),
             _ => Err(self.unexpected_char()),
         }
         .map(Option::from)
@@ -292,7 +293,6 @@ impl Lexer {
         }
 
         match id.as_str() {
-            "unit" => Ok(TokenKind::Unit),
             "true" => Ok(TokenKind::True),
             "false" => Ok(TokenKind::False),
             "struct" => Ok(TokenKind::Struct),
@@ -332,6 +332,8 @@ impl Lexer {
         let start = self.current;
 
         let token_kind = match self.advance()? {
+            '{' => TokenKind::OpenCurlyBrace,
+            '}' => TokenKind::CloseCurlyBrace,
             '(' => TokenKind::OpenParenthesis,
             ')' => TokenKind::CloseParenthesis,
             '[' => TokenKind::OpenBracket,
@@ -399,8 +401,7 @@ mod tests {
     }
 
     #[test]
-    fn test_unit_bool() {
-        parse_ok("unit", vec![TokenKind::Unit]);
+    fn test_bool() {
         parse_ok("true", vec![TokenKind::True]);
         parse_ok("false", vec![TokenKind::False]);
         parse_error(
